@@ -1,7 +1,7 @@
 import React from 'react';
 import './JobsList.css';
 
-function JobsList({ jobs, onJobClick }) {
+function JobsList({ jobs, onJobClick, onEditJob }) {
   if (jobs.length === 0) {
     return (
       <section className="jobs-section">
@@ -30,13 +30,28 @@ function JobsList({ jobs, onJobClick }) {
             <div className="job-api">{job.api}</div>
             <div className="job-actions">
               <button
+                className="btn btn-primary btn-small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onEditJob) {
+                    onEditJob(job.jobId);
+                  } else {
+                    onJobClick(job.jobId);
+                  }
+                }}
+                title="Edit Job"
+              >
+                ✏️ Edit
+              </button>
+              <button
                 className="btn btn-secondary btn-small"
                 onClick={(e) => {
                   e.stopPropagation();
                   onJobClick(job.jobId);
                 }}
+                title="View Details"
               >
-                View Details
+                👁️ View
               </button>
             </div>
           </div>

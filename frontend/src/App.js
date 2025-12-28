@@ -7,6 +7,7 @@ import JobsList from './components/JobsList';
 import ExecutionsList from './components/ExecutionsList';
 import CurrentExecutions from './components/CurrentExecutions';
 import JobDetailsModal from './components/JobDetailsModal';
+import Alerts from './components/Alerts';
 import Footer from './components/Footer';
 import { checkHealth, loadMetrics, loadJobs, loadExecutions } from './services/api';
 
@@ -17,7 +18,10 @@ function App() {
   const [executions, setExecutions] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [failedExecutions, setFailedExecutions] = useState([]);
+  const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
 
   useEffect(() => {
     // Initial load
@@ -46,6 +50,13 @@ function App() {
         setMetrics(metricsData.scheduler);
         setJobs(jobsData.jobs || []);
         setExecutions(executionsData.executions || []);
+        
+        // Track failed executions for alerts
+        const failed = (executionsData.executions || [])
+          .filter(exec => exec.status === 'FAILED')
+          .filter(exec => !dismissedAlerts.has(exec.executionId))
+          .slice(0, 10); // Show max 10 recent failures
+        setFailedExecutions(failed);
       } else {
         setIsOnline(false);
       }
@@ -61,14 +72,34 @@ function App() {
     refreshData();
   };
 
+  const handleJobUpdated = () => {
+    refreshData();
+  };
+
+  const handleDismissAlerts = () => {
+    const newDismissed = new Set(dismissedAlerts);
+    failedExecutions.forEach(exec => {
+      newDismissed.add(exec.executionId);
+    });
+    setDismissedAlerts(newDismissed);
+    setFailedExecutions([]);
+  };
+
   const handleJobClick = (jobId) => {
     setSelectedJob(jobId);
+    setIsModalOpen(true);
+  };
+
+  const handleEditJob = (jobId) => {
+    setSelectedJob(jobId);
+    setEditMode(true);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedJob(null);
+    setEditMode(false);
   };
 
   if (loading) {
@@ -82,13 +113,25 @@ function App() {
 
   return (
     <div className="App">
-      <Header isOnline={isOnline} onRefresh={refreshData} />
+      <Header 
+        isOnline={isOnline} 
+        onRefresh={refreshData}
+        failureCount={failedExecutions.length}
+      />
       
       <div className="container">
         <MetricsDashboard metrics={metrics} isOnline={isOnline} />
         <CurrentExecutions executions={executions} metrics={metrics} />
+        <Alerts 
+          failedExecutions={failedExecutions} 
+          onDismiss={handleDismissAlerts}
+        />
         <CreateJobForm onJobCreated={handleJobCreated} />
-        <JobsList jobs={jobs} onJobClick={handleJobClick} />
+        <JobsList 
+          jobs={jobs} 
+          onJobClick={handleJobClick}
+          onEditJob={handleEditJob}
+        />
         <ExecutionsList executions={executions} />
       </div>
 
@@ -98,6 +141,8 @@ function App() {
         <JobDetailsModal
           jobId={selectedJob}
           onClose={handleCloseModal}
+          onJobUpdated={handleJobUpdated}
+          initialEditMode={editMode}
         />
       )}
     </div>

@@ -28,7 +28,7 @@ function CreateJobForm({ onJobCreated }) {
     setSuccess(false);
 
     try {
-      const response = await createJob(formData);
+      await createJob(formData);
       setSuccess(true);
       setFormData({
         schedule: '',

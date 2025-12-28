@@ -26,6 +26,34 @@
   gap: 1rem;
 }
 
+.failure-badge {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 2px solid #fecaca;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  animation: pulse-alert 2s infinite;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.failure-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+@keyframes pulse-alert {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+  }
+}
+
 .status-indicator {
   display: flex;
   align-items: center;
