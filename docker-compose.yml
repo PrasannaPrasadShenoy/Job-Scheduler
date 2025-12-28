@@ -14,7 +14,7 @@ services:
       - RETRY_ATTEMPTS=3
       - RETRY_DELAY=1000
       - LOG_LEVEL=info
-      - FRONTEND_URL=http://localhost:3001
+      - FRONTEND_URL=https://job-scheduler-frontend-exb6.onrender.com/
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
@@ -29,7 +29,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - REACT_APP_API_URL=http://localhost:3000/api
+      - REACT_APP_API_URL=https://job-scheduler-backend1.onrender.com/api
     depends_on:
       - backend
     restart: unless-stopped
