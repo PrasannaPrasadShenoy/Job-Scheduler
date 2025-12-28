@@ -13,7 +13,7 @@ function Header({ isOnline, onRefresh, failureCount }) {
   return (
     <header className="header">
       <div className="header-content">
-        <h1>🚀 Leel Job Scheduler</h1>
+        <h1>Lenskart Job Scheduler</h1>
         <div className="header-actions">
           {failureCount > 0 && (
             <div className="failure-badge" title={`${failureCount} job execution failure(s)`}>

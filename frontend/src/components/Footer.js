@@ -4,7 +4,7 @@ import './Footer.css';
 function Footer() {
   return (
     <footer>
-      <p>Made with ❤️ by Leel</p>
+      <p>Made for Lenskart</p>
     </footer>
   );
 }
